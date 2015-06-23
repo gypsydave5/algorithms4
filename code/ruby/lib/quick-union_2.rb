@@ -1,13 +1,11 @@
-class QuickUnionUF
-
-  attr_accessor :id
+class QuickUnionUF2
 
   def initialize(number_of_objects)
     @id = (0...number_of_objects).to_a
   end
 
   def union(first, second)
-    @id[first] = @id[second]
+    @id[root(first)] = root(second)
   end
 
   def connected?(first, second)
@@ -19,3 +17,4 @@ class QuickUnionUF
     root(@id[index])
   end
 end
+
