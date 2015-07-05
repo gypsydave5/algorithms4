@@ -1,10 +1,10 @@
 public class Percolation {
 
-  int[][] grid;
-  QuickUnionUF connections;
-  int size;
-  int top;
-  int bottom;
+  private int[][] grid;
+  private QuickUnionUF connections;
+  private int size;
+  private int top;
+  private int bottom;
 
   public Percolation(int N) {
     if (N < 0) { throw new IllegalArgumentException(); }

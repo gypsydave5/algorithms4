@@ -1,21 +1,19 @@
-import java.util.Random;
-
 public class PercolationStats {
 
-  Percolation percolation;
-  double[] results;
-  int totalSites;
+  private Percolation percolation;
+  private double[] results;
+  private int totalSites;
 
   public PercolationStats(int N, int T) {
 
     if (illegalArguments(N, T)) { throw new IllegalArgumentException(); }
 
-    percolation = new Percolation(N);
     totalSites = N * N;
     results = new double[T];
 
     for (int i = 0; i < T; i++) {
 
+      percolation = new Percolation(N);
       int openedSites = 0;
 
       while (!percolation.percolates()) {
@@ -23,13 +21,12 @@ public class PercolationStats {
         int y = StdRandom.uniform(1, N + 1);
         if (percolation.isFull(x, y)) {
           percolation.open(x, y);
-          openedSites++;
+          ++openedSites;
         }
       }
       int totalSites = N * N;
       double p = (double) openedSites / totalSites;
       results[i] = p;
-      i++;
     }
   }
 
