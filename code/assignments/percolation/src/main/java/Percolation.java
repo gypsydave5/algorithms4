@@ -1,4 +1,4 @@
-public class Percolation implements PercolationInterface {
+public class Percolation {
 
   int[][] grid;
   int[] connections;

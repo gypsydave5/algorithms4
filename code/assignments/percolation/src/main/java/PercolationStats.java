@@ -1,6 +1,6 @@
 import java.util.Random;
 
-public class PercolationStats implements PercolationStatsInterface {
+public class PercolationStats {
 
   Percolation percolation;
   double[] results;
