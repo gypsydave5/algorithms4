@@ -1,23 +1,23 @@
 public class Percolation {
 
   private int[][] grid;
-  private QuickUnionUF connections;
+  private WeightedQuickUnionUF connections;
   private int size;
   private int top;
-  private int bottom;
+  private int[] bottoms;
 
   public Percolation(int N) {
-    if (N < 0) { throw new IllegalArgumentException(); }
+    if (N < 1) { throw new IllegalArgumentException(); }
     grid = new int[N][N];
-    size = (N * N) + 2; //grid size plus the dummy top and bottom
-    bottom = (N * N + 1);
+    size = (N * N) + 1 + N; //grid size plus the dummy top and bottoms
+    bottoms = new int[N];
     top = 0;
-    connections = new QuickUnionUF(size);
+    connections = new WeightedQuickUnionUF(size);
 
     for (int i = 0; i < N; i++) {
       connections.union(N - i, top);
-      connections.union((N * N) - N + i + 1, bottom);
-      for (int j = 0; j < N; j++) { grid[i][j] = 0; }
+      bottoms[i] = (N * N) + 1 + i;
+      connections.union((N * N) - N + i + 1, bottoms[i]);
     }
   }
 
@@ -42,18 +42,23 @@ public class Percolation {
   }
 
   public boolean isFull(int i, int j) {
-    return grid[i - 1][j - 1] == 0;
+    return (grid[i - 1][j - 1] == 1)
+            && connections.connected(top, (((grid.length - 1) * j) + i - 1 ));
   }
 
   public boolean percolates() {
-    return connections.connected(top, bottom);
+    boolean result = false;
+    for (int bottom : bottoms) {
+      if (connections.connected(top, bottom)) { result = true; }
+    }
+    return result;
   }
 
   private boolean isInGrid(int i, int j) {
-    return (0 < i) &&
-            (i <= grid.length) &&
-            (0 < j) &&
-            (j <= grid.length);
+    return (0 < i)
+            && (i <= grid.length)
+            && (0 < j)
+            && (j <= grid.length);
   }
 
   private void joinRight(int i, int j) {

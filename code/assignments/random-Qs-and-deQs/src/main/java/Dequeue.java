@@ -16,9 +16,18 @@ public class Dequeue<Item> {
   }
 
   public void addFirst(Item item) {
-    if (front > (s.length / 2)) { resize(); }
-    if (front == back) { back++; }
+    if (front == (s.length - 1)) { growFront(); }
+    if (front <= (s.length / 4)) { shrinkFront(); }
+    if ((front == back) && (s[front] == null)) { back++; }
     s[++front] = item;
+  }
+
+  private void shrinkFront() {
+    Item[] newArray = (Item[]) new Object[s.length / 4];
+    for (int i = 0; i < newArray.length; i++) {
+      newArray[i] = s[i];
+    }
+    s = newArray;
   }
 
   public Item removeFirst() {
@@ -28,8 +37,8 @@ public class Dequeue<Item> {
   }
 
   public void addLast(Item item) {
-    if (back > (s.length / 2)) { resize(); }
-    if (back == front) { front--; }
+    if (back == 0) { growBack(); }
+    if ((back == front) && (s[back] == null)) { front--; }
     s[--back] = item;
   }
 
@@ -39,6 +48,21 @@ public class Dequeue<Item> {
     return result;
   }
 
-  private void resize() {
+  private void growFront() {
+    Item[] newArray = (Item[]) new Object[s.length * 2];
+    for (int i = 0; i < s.length; i++) {
+      newArray[i] = s[i];
+    }
+    s = newArray;
+  }
+
+  private void growBack() {
+    Item[] newArray = (Item[]) new Object[s.length * 2];
+    for (int i = 0; i < s.length; i++) {
+      newArray[i + s.length] = s[i];
+    }
+    back = back + s.length;
+    front = front + s.length;
+    s = newArray;
   }
 }
