@@ -63,9 +63,11 @@ class DequeueTest extends Specification {
         when:
         dequeue.addFirst("bob")
         dequeue.addFirst("bill")
-        dequeue.removeFirst()
-        dequeue.removeLast()
+        def bill = dequeue.removeFirst()
+        def bob = dequeue.removeLast()
         then:
+        bob == 'bob'
+        bill == 'bill'
         dequeue.isEmpty() == true
     }
 
@@ -87,5 +89,40 @@ class DequeueTest extends Specification {
         then:
         dequeue.removeFirst() == 1
         dequeue.removeLast() == 100
+    }
+
+    def "Can't really test that it's shrinking right - more for regression"() {
+        given:
+        def dequeue = new Dequeue<Boolean>()
+        when:
+        100.times { dequeue.addFirst(true) }
+        99.times { dequeue.removeFirst() }
+        then:
+        dequeue.removeLast() == true
+    }
+
+    def "And do the same backwards..."() {
+        given:
+        def dequeue = new Dequeue<Boolean>()
+        when:
+        100.times { dequeue.addLast(true) }
+        99.times { dequeue.removeLast() }
+        then:
+        dequeue.removeFirst() == true
+    }
+
+    def "And now them all"() {
+        given:
+        def dequeue = new Dequeue<String>()
+        when:
+        5.times { dequeue.addLast("b") }
+        5.times { dequeue.addFirst("a") }
+        5.times { dequeue.removeFirst() }
+        5.times { dequeue.removeLast() }
+        def whenEmpty = dequeue.removeFirst()
+        def stillEmpty = dequeue.removeLast()
+        then:
+        whenEmpty == null
+        stillEmpty == null
     }
 }

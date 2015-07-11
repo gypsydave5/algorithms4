@@ -14,26 +14,30 @@ public class Percolation {
     top = 0;
     connections = new WeightedQuickUnionUF(size);
 
-    for (int i = 0; i < N; i++) {
-      connections.union(N - i, top);
-      bottoms[i] = (N * N) + 1 + i;
-      connections.union((N * N) - N + i + 1, bottoms[i]);
+    if (N != 1) {
+      for (int i = 0; i < N; i++) {
+        connections.union(N - i, top);
+        bottoms[i] = (N * N) + 1 + i;
+        connections.union((N * N) - N + i + 1, bottoms[i]);
+      }
+    } else {
+      bottoms[0] = 1;
     }
   }
 
   public void open(int i, int j) {
     grid[i - 1][j - 1] = 1;
     if (isInGrid(i, j - 1) && isOpen(i, j - 1)) {
-      joinBelow(i, j);
-    }
-    if (isInGrid(i, j + 1) && isOpen(i, j + 1)) {
-      joinAbove(i, j);
-    }
-    if (isInGrid(i - 1, j) && isOpen(i - 1, j)) {
       joinLeft(i, j);
     }
-    if (isInGrid(i + 1, j) && isOpen(i + 1, j)) {
+    if (isInGrid(i, j + 1) && isOpen(i, j + 1)) {
       joinRight(i, j);
+    }
+    if (isInGrid(i - 1, j) && isOpen(i - 1, j)) {
+      joinUp(i, j);
+    }
+    if (isInGrid(i + 1, j) && isOpen(i + 1, j)) {
+      joinDown(i, j);
     }
   }
 
@@ -43,7 +47,7 @@ public class Percolation {
 
   public boolean isFull(int i, int j) {
     return (grid[i - 1][j - 1] == 1)
-            && connections.connected(top, (((grid.length - 1) * j) + i - 1 ));
+            && connections.connected(top, ((i - 1) * grid.length) + j);
   }
 
   public boolean percolates() {
@@ -51,6 +55,7 @@ public class Percolation {
     for (int bottom : bottoms) {
       if (connections.connected(top, bottom)) { result = true; }
     }
+    if ((grid.length == 1) && (isOpen(1, 1))) { result = true; }
     return result;
   }
 
@@ -61,19 +66,19 @@ public class Percolation {
             && (j <= grid.length);
   }
 
+  private void joinDown(int i, int j) {
+    connections.union(((i - 1) * grid.length) + j, (i * grid.length) + j);
+  }
+
+  private void joinUp(int i, int j) {
+    connections.union(((i - 1) * grid.length) + j, ((i - 2) * grid.length) + j);
+  }
+
   private void joinRight(int i, int j) {
-    connections.union(((j - 1) * grid.length) + i, ((j - 1) * grid.length) + i + 1);
+    connections.union(((i - 1) * grid.length) + j, (((i - 1) * grid.length) + j) + 1);
   }
 
   private void joinLeft(int i, int j) {
-    connections.union(((j - 1) * grid.length) + i, ((j - 1) * grid.length) + i - 1);
-  }
-
-  private void joinAbove(int i, int j) {
-    connections.union(((j - 1) * grid.length) + i, (j * grid.length) + i);
-  }
-
-  private void joinBelow(int i, int j) {
-    connections.union(((j - 1) * grid.length) + i, ((j - 2) * grid.length) + i);
+    connections.union(((i - 1) * grid.length) + j, (((i - 1) * grid.length) + j) - 1);
   }
 }
